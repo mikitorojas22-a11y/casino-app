@@ -194,7 +194,7 @@ body {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-analytics.js";
-import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, FacebookAuthProvider, createUserWithEmailAndPassword, signInWithCredential } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut, GoogleAuthProvider, FacebookAuthProvider, createUserWithEmailAndPassword, signInWithCredential } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBGnOuT063hv6VxzNQPyY1K5LQbRrZJWHw",
@@ -246,12 +246,16 @@ btnEmail.addEventListener('click', async (e) => {
     }
 });
 
-getRedirectResult(auth).then((result) => {
-    if (result) {
-        showHome();
-    }
-}).catch((error) => {
+getRedirectResult(auth).catch((error) => {
     alert("Error con Google: " + error.message);
+});
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        showHome();
+    } else {
+        showAuth();
+    }
 });
 
 btnGoogle.addEventListener('click', () => {
@@ -269,8 +273,8 @@ btnFacebook.addEventListener('click', async () => {
     }
 });
 
-btnBack.addEventListener('click', () => {
-    showAuth();
+btnBack.addEventListener('click', async () => {
+    await signOut(auth);
 });
 </script>
 

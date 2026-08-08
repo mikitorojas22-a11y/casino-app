@@ -258,6 +258,7 @@ btnGoogle.addEventListener('click', async () => {
     provider.setCustomParameters({ prompt: 'select_account' });
     try {
         await signInWithPopup(auth, provider);
+        showHome();
     } catch (error) {
         alert("Error al iniciar sesión: " + error.message);
     }
@@ -267,6 +268,7 @@ btnFacebook.addEventListener('click', async () => {
     const provider = new FacebookAuthProvider();
     try {
         await signInWithPopup(auth, provider);
+        showHome();
     } catch (error) {
         alert("Error con Facebook: " + error.message);
     }

@@ -148,7 +148,7 @@ body {
 <body>
 
 <div class="card">
-    <div id="screen-auth" class="screen active">
+    <div id="screen-auth" class="screen">
         <div class="header">
             <h1>Crear cuenta</h1>
             <p>Ingresa tus datos para continuar</p>
@@ -194,7 +194,7 @@ body {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-analytics.js";
-import { getAuth, signInWithPopup, onAuthStateChanged, signOut, GoogleAuthProvider, FacebookAuthProvider, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+import { getAuth, signInWithPopup, onAuthStateChanged, signOut, GoogleAuthProvider, FacebookAuthProvider, createUserWithEmailAndPassword, browserLocalPersistence, setPersistence } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBGnOuT063hv6VxzNQPyY1K5LQbRrZJWHw",
@@ -209,6 +209,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
+
+setPersistence(auth, browserLocalPersistence);
 
 const screenAuth = document.getElementById('screen-auth');
 const screenHome = document.getElementById('screen-home');
@@ -257,8 +259,10 @@ btnGoogle.addEventListener('click', async () => {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     try {
-        await signInWithPopup(auth, provider);
-        showHome();
+        const result = await signInWithPopup(auth, provider);
+        if (result.user) {
+            showHome();
+        }
     } catch (error) {
         alert("Error al iniciar sesión: " + error.message);
     }
@@ -267,8 +271,10 @@ btnGoogle.addEventListener('click', async () => {
 btnFacebook.addEventListener('click', async () => {
     const provider = new FacebookAuthProvider();
     try {
-        await signInWithPopup(auth, provider);
-        showHome();
+        const result = await signInWithPopup(auth, provider);
+        if (result.user) {
+            showHome();
+        }
     } catch (error) {
         alert("Error con Facebook: " + error.message);
     }

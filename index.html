@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App Auth</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+body {
+    background-color: #0f172a;
+    color: #f8fafc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+.card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 24px;
+    padding: 32px 24px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+}
+.screen {
+    display: none;
+}
+.screen.active {
+    display: block;
+}
+.header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+.header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+.header p {
+    color: #94a3b8;
+    font-size: 14px;
+}
+.form-group {
+    margin-bottom: 16px;
+}
+.form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #cbd5e1;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.form-group input {
+    width: 100%;
+    padding: 14px 16px;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.form-group input:focus {
+    border-color: #6366f1;
+}
+.btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: #6366f1;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s;
+}
+.btn-primary:active {
+    background: #4f46e5;
+}
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 24px 0;
+    color: #64748b;
+    font-size: 12px;
+}
+.divider::before, .divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #334155;
+}
+.divider span {
+    padding: 0 12px;
+}
+.social-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.btn-social {
+    width: 100%;
+    padding: 12px;
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    color: #f8fafc;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    cursor: pointer;
+}
+.btn-social svg {
+    width: 18px;
+    height: 18px;
+}
+.welcome-box {
+    text-align: center;
+    padding: 20px 0;
+}
+.welcome-box h2 {
+    font-size: 28px;
+    color: #818cf8;
+    margin-bottom: 12px;
+}
+.welcome-box p {
+    color: #94a3b8;
+    margin-bottom: 24px;
+}
+</style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+<div class="card">
+    <div id="screen-auth" class="screen active">
+        <div class="header">
+            <h1>Crear cuenta</h1>
+            <p>Ingresa tus datos para continuar</p>
+        </div>
+
+        <form id="auth-form">
+            <div class="form-group">
+                <label>Correo Electrónico</label>
+                <input type="email" id="email-input" placeholder="nombre@ejemplo.com" required>
+            </div>
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" id="pass-input" placeholder="••••••••" required>
+            </div>
+            <button type="button" class="btn-primary" id="btn-email">Registrarse con Email</button>
+        </form>
+
+        <div class="divider">
+            <span>O CONTINÚA CON</span>
+        </div>
+
+        <div class="social-buttons">
+            <button type="button" class="btn-social" id="btn-google">
+    <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
+    Continuar con Google
+</button>
+            <button type="button" class="btn-social" id="btn-facebook">
+    <svg viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    Continuar con Facebook
+</button>
+        </div>
+    </div>
+
+    <div id="screen-home" class="screen">
+        <div class="welcome-box">
+            <h2>Hola mundo</h2>
+            <p>Has iniciado sesión correctamente.</p>
+            <button class="btn-primary" id="btn-back">Cerrar sesión</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-analytics.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, createUserWithEmailAndPassword, signInWithCredential } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBGnOuT063hv6VxzNQPyY1K5LQbRrZJWHw",
+    authDomain: "casino-29289.firebaseapp.com",
+    projectId: "casino-29289",
+    storageBucket: "casino-29289.firebasestorage.app",
+    messagingSenderId: "861262722967",
+    appId: "1:861262722967:web:8862a4f0472ab3da26b6d2",
+    measurementId: "G-R9YVW8BF79"
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
+
+const screenAuth = document.getElementById('screen-auth');
+const screenHome = document.getElementById('screen-home');
+const btnBack = document.getElementById('btn-back');
+
+const btnEmail = document.getElementById('btn-email');
+const btnGoogle = document.getElementById('btn-google');
+const btnFacebook = document.getElementById('btn-facebook');
+
+function showHome() {
+    screenAuth.classList.remove('active');
+    screenHome.classList.add('active');
+}
+
+function showAuth() {
+    screenHome.classList.remove('active');
+    screenAuth.classList.add('active');
+}
+
+btnEmail.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email-input').value;
+    const password = document.getElementById('pass-input').value;
+    
+    if(!email || !password) {
+        alert("Ingresa correo y contraseña");
+        return;
+    }
+
+    try {
+        await createUserWithEmailAndPassword(auth, email, password);
+        showHome();
+    } catch (error) {
+        alert("Error: " + error.message);
+    }
+});
+
+btnGoogle.addEventListener('click', () => {
+    google.accounts.id.initialize({
+        client_id: "861262722967-e6cd240puucsrdm0oapm8unhuppsu1fe.apps.googleusercontent.com",
+        callback: async (response) => {
+            try {
+                const credential = GoogleAuthProvider.credential(response.credential);
+                await signInWithCredential(auth, credential);
+                showHome();
+            } catch (error) {
+                alert("Error al iniciar sesión: " + error.message);
+            }
+        }
+    });
+    google.accounts.id.prompt();
+});
+
+btnFacebook.addEventListener('click', async () => {
+    const provider = new FacebookAuthProvider();
+    try {
+        await signInWithPopup(auth, provider);
+        showHome();
+    } catch (error) {
+        alert("Error con Facebook: " + error.message);
+    }
+});
+
+btnBack.addEventListener('click', () => {
+    showAuth();
+});
+</script>
+
+</body>
+</html>

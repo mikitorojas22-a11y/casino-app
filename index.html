@@ -144,7 +144,6 @@ body {
     margin-bottom: 24px;
 }
 </style>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
@@ -247,20 +246,14 @@ btnEmail.addEventListener('click', async (e) => {
     }
 });
 
-btnGoogle.addEventListener('click', () => {
-    google.accounts.id.initialize({
-        client_id: "861262722967-e6cd240puucsrdm0oapm8unhuppsu1fe.apps.googleusercontent.com",
-        callback: async (response) => {
-            try {
-                const credential = GoogleAuthProvider.credential(response.credential);
-                await signInWithCredential(auth, credential);
-                showHome();
-            } catch (error) {
-                alert("Error al iniciar sesión: " + error.message);
-            }
-        }
-    });
-    google.accounts.id.prompt();
+btnGoogle.addEventListener('click', async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+        await signInWithPopup(auth, provider);
+        showHome();
+    } catch (error) {
+        alert("Error con Google: " + error.message);
+    }
 });
 
 btnFacebook.addEventListener('click', async () => {
